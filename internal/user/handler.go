@@ -7,23 +7,15 @@ import (
 )
 
 type Handler struct {
-	service *Service
+	service Service
 }
 
-func NewHandler(service *Service) *Handler {
-	return &Handler{service: service}
-}
-
-type signupRequest struct {
-	FirstName string `json:"firstName" binding:"required"`
-	LastName  string `json:"lastName" binding:"required"`
-	Username  string `json:"username" binding:"required"`
-	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required,min=8"`
+func NewHandler(service Service) *Handler {
+	return &Handler{service}
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
-	var req signupRequest
+	var req SignUpInput
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
@@ -57,4 +49,67 @@ func (h *Handler) SignUp(c *gin.Context) {
 			"created_at": user.CreatedAt.Format(time.RFC3339),
 		},
 	})
+}
+
+func (h *Handler) Login(c *gin.Context) {
+	var req LoginInput
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	res, err := h.service.Login(req)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":       "Login successful",
+		"access_token":  res.AccessToken,
+		"refresh_token": res.RefreshToken,
+		"user":          res.User,
+	})
+}
+
+func (h *Handler) RefreshToken(c *gin.Context) {
+	var req refreshRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token is required"})
+		return
+	}
+
+	tokens, err := h.service.RefreshToken(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired refresh token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, tokens)
+}
+
+func (h *Handler) ChangePassword(c *gin.Context) {
+	var req changePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	err := h.service.ChangePassword(userID.(string), req.CurrentPassword, req.NewPassword)
+	if err != nil {
+		if err.Error() == "incorrect current password" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to change password"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
 }

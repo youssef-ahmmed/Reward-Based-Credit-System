@@ -24,16 +24,20 @@ func (r *Repository) IsEmailOrUsernameTaken(email, username string) (bool, error
 
 func (r *Repository) FindByEmail(email string) (*User, error) {
 	var user User
-	err := r.db.Where("email = ?", email).First(&user).Error
-	return &user, err
+	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
-func (r *Repository) GetWallet(userID string) (*Wallet, error) {
-	var wallet Wallet
-	err := r.db.Where("user_id = ?", userID).First(&wallet).Error
-	return &wallet, err
+func (r *Repository) FindByID(id string) (*User, error) {
+	var user User
+	if err := r.db.First(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
-func (r *Repository) UpdateWallet(wallet *Wallet) error {
-	return r.db.Save(wallet).Error
+func (r *Repository) UpdatePassword(userID string, hashedPassword string) error {
+	return r.db.Model(&User{}).Where("id = ?", userID).Update("password_hash", hashedPassword).Error
 }
