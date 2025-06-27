@@ -1,0 +1,16 @@
+# .air.toml
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ./cmd/main.go"
+bin = "tmp/main"
+include_dir = ["cmd", "internal"]
+exclude_dir = ["tmp", "docs", ".git"]
+log = "color"
+
+[run]
+cmd = "./tmp/main"
+
+[log]
+time = true
