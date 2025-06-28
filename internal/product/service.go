@@ -1,6 +1,7 @@
 package product
 
 import (
+	"Start/internal/bridge"
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
@@ -9,11 +10,15 @@ import (
 )
 
 type Service struct {
-	repo *Repository
+	repo         *Repository
+	walletBridge bridge.WalletPort
 }
 
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, walletBridge bridge.WalletPort) *Service {
+	return &Service{
+		repo:         repo,
+		walletBridge: walletBridge,
+	}
 }
 
 func (s *Service) GetAllProducts(filters ProductFilters, page, limit int, sortBy, sortOrder string) ([]Product, PaginationMeta, error) {
@@ -241,4 +246,108 @@ func (s *Service) UpdateCategory(id string, input *UpdateCategoryRequest) (*Cate
 
 func (s *Service) DeleteCategory(id string) error {
 	return s.repo.DeleteCategory(id)
+}
+
+func (s *Service) CreateRedemption(userID string, input CreateRedemptionRequest) (*RedemptionResponse, error) {
+	product, err := s.repo.GetProductByID(input.ProductID)
+	if err != nil || product == nil {
+		return nil, errors.New("product not found")
+	}
+	if !product.IsOffer {
+		return nil, errors.New("product is not available for redemption")
+	}
+	if input.Quantity <= 0 {
+		return nil, errors.New("invalid quantity")
+	}
+	if input.Quantity > product.StockQuantity {
+		return nil, errors.New("insufficient stock")
+	}
+
+	pointsRequired := input.Quantity * product.RedemptionPoints
+	wallet, err := s.walletBridge.GetWallet(userID) // via bridge
+	if err != nil || wallet == nil {
+		return nil, errors.New("user wallet not found")
+	}
+	if wallet.PointsBalance < pointsRequired {
+		return nil, errors.New("insufficient points")
+	}
+
+	redemptionID := uuid.NewString()
+	now := time.Now()
+
+	if err := s.repo.WithTx(func(tx *gorm.DB) error {
+		if err := s.walletBridge.DeductPointsTx(tx, userID, pointsRequired); err != nil {
+			return err
+		}
+		if err := s.repo.DecrementStockTx(tx, product.ID, input.Quantity); err != nil {
+			return err
+		}
+		r := &Redemption{
+			ID:        redemptionID,
+			UserID:    userID,
+			ProductID: product.ID,
+			Quantity:  input.Quantity,
+			CreatedAt: now,
+		}
+		return tx.Create(r).Error
+	}); err != nil {
+		return nil, err
+	}
+
+	return &RedemptionResponse{
+		ID: redemptionID,
+		Product: RedemptionProduct{
+			ID:           product.ID,
+			Name:         product.Name,
+			RewardPoints: product.RedemptionPoints,
+		},
+		Quantity:   input.Quantity,
+		PointsUsed: pointsRequired,
+		CreatedAt:  now.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *Service) GetUserRedemptions(userID string, page, limit int) ([]*RedemptionResponse, int64, error) {
+	records, total, err := s.repo.ListRedemptionsByUser(userID, page, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var responses []*RedemptionResponse
+	for _, r := range records {
+		responses = append(responses, &RedemptionResponse{
+			ID: r.ID,
+			Product: RedemptionProduct{
+				ID:           r.Product.ID,
+				Name:         r.Product.Name,
+				RewardPoints: r.Product.RedemptionPoints,
+			},
+			Quantity:   r.Quantity,
+			PointsUsed: r.Quantity * r.Product.RedemptionPoints,
+			CreatedAt:  r.CreatedAt.Format(time.RFC3339),
+		})
+	}
+	return responses, total, nil
+}
+
+func (s *Service) GetRedemptionByID(userID, id string) (*RedemptionResponse, error) {
+	r, err := s.repo.GetRedemptionByID(id)
+	if err != nil || r == nil {
+		return nil, errors.New("not found")
+	}
+	if r.UserID != userID {
+		return nil, errors.New("unauthorized")
+	}
+
+	return &RedemptionResponse{
+		ID: r.ID,
+		Product: RedemptionProduct{
+			ID:           r.Product.ID,
+			Name:         r.Product.Name,
+			RewardPoints: r.Product.RedemptionPoints,
+		},
+		Quantity:   r.Quantity,
+		PointsUsed: r.Quantity * r.Product.RedemptionPoints,
+		CreatedAt:  r.CreatedAt.Format(time.RFC3339),
+	}, nil
 }

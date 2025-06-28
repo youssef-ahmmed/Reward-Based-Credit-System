@@ -18,6 +18,7 @@ type Service interface {
 	UpdateProfile(userID string, input UpdateProfileRequest) error
 	GetWallet(userID string) (*Wallet, error)
 	AddToWallet(userID string, credits int, points int) error
+	DeductPointsTx(tx *gorm.DB, userID string, points int) error
 }
 
 type service struct {
@@ -211,4 +212,8 @@ func (s *service) AddToWallet(userID string, credits int, points int) error {
 	wallet.UpdatedAt = time.Now()
 
 	return s.repo.UpdateWallet(wallet)
+}
+
+func (s *service) DeductPointsTx(tx *gorm.DB, userID string, points int) error {
+	return s.repo.DeductPointsTx(tx, userID, points)
 }

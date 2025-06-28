@@ -71,3 +71,8 @@ func (r *Repository) GetWalletByUserID(userID string) (*Wallet, error) {
 func (r *Repository) UpdateWallet(wallet *Wallet) error {
 	return r.db.Save(wallet).Error
 }
+
+func (r *Repository) DeductPointsTx(tx *gorm.DB, userID string, points int) error {
+	return tx.Model(&Wallet{}).Where("user_id = ? AND points_balance >= ?", userID, points).
+		UpdateColumn("points_balance", gorm.Expr("points_balance - ?", points)).Error
+}
