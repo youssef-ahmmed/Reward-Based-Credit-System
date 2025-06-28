@@ -356,53 +356,20 @@ Authorization: Bearer <jwt_token>
 
 ---
 
-## 5. Reward Account Routes
+## 5. Wallet Routes
 
-### 5.1 Get User Reward Account
-**`GET /rewards/account`** *(Protected)*
+### 5.1 Get User Wallet Info
+**`GET /wallets`** *(Protected)*
 
 **Response:**
 - `200 OK`:
 ```json
 {
-  "account": {
+  "wallet": {
     "user_id": 123,
     "points_balance": 1230,
     "credits_balance": 2450,
     "updated_at": "2025-06-26T10:30:00Z"
-  }
-}
-```
-
-### 5.2 Get Reward Account History
-**`GET /rewards/history`** *(Protected)*
-
-**Query Parameters:**
-- `page` (optional): Page number (default: 1)
-- `limit` (optional): Items per page (default: 20)
-- `type` (optional): Filter by transaction type (credit/debit)
-
-**Response:**
-- `200 OK`:
-```json
-{
-  "transactions": [
-    {
-      "id": 789,
-      "type": "credit",
-      "points_change": 75,
-      "credits_change": 550,
-      "description": "Purchase reward",
-      "reference_id": 456,
-      "reference_type": "purchase",
-      "created_at": "2025-06-26T10:30:00Z"
-    }
-  ],
-  "pagination": {
-    "current_page": 1,
-    "total_pages": 2,
-    "total_items": 15,
-    "items_per_page": 20
   }
 }
 ```
