@@ -1,7 +1,9 @@
 package credit
 
 import (
+	"Start/internal/bridge"
 	"Start/internal/shared/database"
+	"Start/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +11,13 @@ func RegisterModule(rg *gin.RouterGroup) {
 	db := database.GetDB()
 
 	repo := NewRepository(db)
-	service := NewService(repo)
+
+	userRepo := user.NewRepository(db)
+	userService := user.NewService(userRepo)
+
+	walletBridge := bridge.NewWalletServiceBridge(userService)
+
+	service := NewService(repo, walletBridge)
 	handler := NewHandler(service)
 
 	RegisterCreditRoutes(rg, handler)

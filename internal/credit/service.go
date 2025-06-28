@@ -1,6 +1,7 @@
 package credit
 
 import (
+	"Start/internal/bridge"
 	"errors"
 	"time"
 
@@ -8,11 +9,15 @@ import (
 )
 
 type Service struct {
-	repo *Repository
+	repo         *Repository
+	walletBridge bridge.WalletPort
 }
 
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, walletBridge bridge.WalletPort) *Service {
+	return &Service{
+		repo:         repo,
+		walletBridge: walletBridge,
+	}
 }
 
 func (s *Service) GetAllCreditPackages(page, limit int, activeFilter *bool) ([]CreditPackageResponse, PaginationMeta, error) {
@@ -136,6 +141,8 @@ func (s *Service) CreatePurchase(userID string, input CreatePurchaseRequest) (*P
 	if err := s.repo.CreatePurchase(p); err != nil {
 		return nil, err
 	}
+
+	_ = s.walletBridge.AddToWallet(userID, pkg.Credits, pkg.RewardPoints)
 
 	return ToPurchaseResponse(p, pkg), nil
 }
