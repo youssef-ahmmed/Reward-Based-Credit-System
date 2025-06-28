@@ -46,3 +46,38 @@ func (r *Repository) Update(pkg *CreditPackage) error {
 func (r *Repository) Delete(id string) error {
 	return r.db.Delete(&CreditPackage{}, "id = ?", id).Error
 }
+
+func (r *Repository) CreatePurchase(p *Purchase) error {
+	return r.db.Create(p).Error
+}
+
+func (r *Repository) GetUserPurchases(userID, status string, page, limit int) ([]Purchase, int64, error) {
+	var purchases []Purchase
+	var count int64
+
+	q := r.db.Where("user_id = ?", userID)
+	if status != "" {
+		q = q.Where("status = ?", status)
+	}
+
+	if err := q.Model(&Purchase{}).Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := q.Preload("CreditPackage").
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Order("created_at DESC").
+		Find(&purchases).Error
+
+	return purchases, count, err
+}
+
+func (r *Repository) GetPurchaseByID(id string) (*Purchase, error) {
+	var p Purchase
+	err := r.db.Preload("CreditPackage").Where("id = ?", id).First(&p).Error
+	if err != nil {
+		return nil, err
+	}
+	return &p, nil
+}

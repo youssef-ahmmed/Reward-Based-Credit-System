@@ -13,8 +13,11 @@ type CreditPackage struct {
 }
 
 type Purchase struct {
-	ID              string    `json:"id"`
-	UserID          string    `json:"user_id"`
-	CreditPackageID string    `json:"credit_package_id"`
-	CreatedAt       time.Time `json:"created_at"`
+	ID              string `gorm:"primaryKey"`
+	UserID          string
+	CreditPackageID string
+	Status          string
+	CreatedAt       time.Time
+
+	CreditPackage CreditPackage `gorm:"foreignKey:CreditPackageID"`
 }

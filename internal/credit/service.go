@@ -115,3 +115,60 @@ func (s *Service) UpdateCreditPackages(id string, input UpdateCreditPackageReque
 func (s *Service) DeleteCreditPackage(id string) error {
 	return s.repo.Delete(id)
 }
+
+func (s *Service) CreatePurchase(userID string, input CreatePurchaseRequest) (*PurchaseResponse, error) {
+	pkg, err := s.repo.GetByID(input.CreditPackageID)
+	if err != nil {
+		return nil, errors.New("package not found")
+	}
+
+	if input.PaymentMethod != "credit_card" {
+		return nil, errors.New("payment failed")
+	}
+
+	p := &Purchase{
+		ID:              uuid.NewString(),
+		UserID:          userID,
+		CreditPackageID: input.CreditPackageID,
+		CreatedAt:       time.Now(),
+	}
+
+	if err := s.repo.CreatePurchase(p); err != nil {
+		return nil, err
+	}
+
+	return ToPurchaseResponse(p, pkg), nil
+}
+
+func (s *Service) GetUserPurchases(userID, status string, page, limit int) ([]PurchaseResponse, PaginationMeta, error) {
+	purchases, total, err := s.repo.GetUserPurchases(userID, status, page, limit)
+	if err != nil {
+		return nil, PaginationMeta{}, err
+	}
+
+	var res []PurchaseResponse
+	for _, p := range purchases {
+		pkg := p.CreditPackage
+		res = append(res, *ToPurchaseResponse(&p, &pkg))
+	}
+
+	totalPages := (int(total) + limit - 1) / limit
+	meta := PaginationMeta{
+		CurrentPage:  page,
+		TotalPages:   totalPages,
+		TotalItems:   int(total),
+		ItemsPerPage: limit,
+	}
+	return res, meta, nil
+}
+
+func (s *Service) GetPurchaseByID(userID, purchaseID string) (*PurchaseResponse, error) {
+	p, err := s.repo.GetPurchaseByID(purchaseID)
+	if err != nil {
+		return nil, errors.New("not found")
+	}
+	if p.UserID != userID {
+		return nil, errors.New("forbidden")
+	}
+	return ToPurchaseResponse(p, &p.CreditPackage), nil
+}

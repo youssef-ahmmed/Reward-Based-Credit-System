@@ -13,4 +13,5 @@ func RegisterModule(rg *gin.RouterGroup) {
 	handler := NewHandler(service)
 
 	RegisterCreditRoutes(rg, handler)
+	RegisterPurchaseRoutes(rg, handler)
 }
