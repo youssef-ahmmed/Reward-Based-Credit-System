@@ -40,12 +40,12 @@ func GetDB() *gorm.DB {
 			},
 		})
 		if err != nil {
-			log.Fatalf("❌ Failed to connect to database: %v", err)
+			log.Fatalf("Failed to connect to database: %v", err)
 		}
 
 		sqlDB, err := db.DB()
 		if err != nil {
-			log.Fatalf("❌ Could not get DB instance: %v", err)
+			log.Fatalf("Could not get DB instance: %v", err)
 		}
 
 		sqlDB.SetMaxIdleConns(10)

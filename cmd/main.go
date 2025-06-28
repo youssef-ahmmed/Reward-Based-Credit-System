@@ -12,7 +12,7 @@ func main() {
 
 	err := r.Run(":8080")
 	if err != nil {
-		log.Fatalf("❌ App crashed: %v", err)
+		log.Fatalf("App crashed: %v", err)
 		return
 	}
 }
