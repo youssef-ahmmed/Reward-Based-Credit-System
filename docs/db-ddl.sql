@@ -40,6 +40,7 @@ CREATE TABLE core.purchase
     id                UUID PRIMARY KEY,
     user_id           UUID REFERENCES core.user (id),
     credit_package_id UUID REFERENCES core.credit_package (id) ON DELETE SET NULL,
+    status            TEXT,
     created_at        TIMESTAMPTZ DEFAULT now()
 );
 
