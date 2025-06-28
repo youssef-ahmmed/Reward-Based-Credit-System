@@ -7,7 +7,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -21,6 +22,11 @@ services:
     image: postgres:17
     container_name: postgres_db
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d reward_system" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_DB: reward_system
       POSTGRES_USER: postgres
