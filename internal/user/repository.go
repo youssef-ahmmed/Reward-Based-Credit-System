@@ -41,3 +41,15 @@ func (r *Repository) FindByID(id string) (*User, error) {
 func (r *Repository) UpdatePassword(userID string, hashedPassword string) error {
 	return r.db.Model(&User{}).Where("id = ?", userID).Update("password_hash", hashedPassword).Error
 }
+
+func (r *Repository) IsUsernameTaken(username string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&User{}).Where("username = ?", username).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (r *Repository) UpdateUser(user *User) error {
+	return r.db.Save(user).Error
+}

@@ -26,7 +26,7 @@ type UserDTO struct {
 	Email     string `json:"email"`
 }
 
-type refreshRequest struct {
+type RefreshRequest struct {
 	RefreshToken string `json:"refreshToken" binding:"required"`
 }
 
@@ -35,8 +35,14 @@ type TokenPair struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
-type changePasswordRequest struct {
+type ChangePasswordRequest struct {
 	CurrentPassword string `json:"currentPassword" binding:"required"`
 	NewPassword     string `json:"newPassword" binding:"required,min=8"`
 	ConfirmPassword string `json:"confirmPassword" binding:"required,eqfield=NewPassword"`
+}
+
+type UpdateProfileRequest struct {
+	FirstName *string `json:"firstName"`
+	LastName  *string `json:"lastName"`
+	Username  *string `json:"username"`
 }

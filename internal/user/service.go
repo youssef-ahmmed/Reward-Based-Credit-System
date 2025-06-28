@@ -13,6 +13,8 @@ type Service interface {
 	Login(input LoginInput) (*LoginResponse, error)
 	RefreshToken(refreshToken string) (*TokenPair, error)
 	ChangePassword(userID, currentPassword, newPassword string) error
+	GetProfile(userID string) (*UserDTO, error)
+	UpdateProfile(userID string, input UpdateProfileRequest) error
 }
 
 type service struct {
@@ -121,4 +123,46 @@ func (s *service) ChangePassword(userID, currentPassword, newPassword string) er
 	}
 
 	return s.repo.UpdatePassword(userID, string(hashedNew))
+}
+
+func (s *service) GetProfile(userID string) (*UserDTO, error) {
+	user, err := s.repo.FindByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserDTO{
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+	}, nil
+}
+
+func (s *service) UpdateProfile(userID string, input UpdateProfileRequest) error {
+	user, err := s.repo.FindByID(userID)
+	if err != nil {
+		return err
+	}
+
+	if input.Username != nil && *input.Username != user.Username {
+		taken, err := s.repo.IsUsernameTaken(*input.Username)
+		if err != nil {
+			return err
+		}
+		if taken {
+			return errors.New("username already exists")
+		}
+		user.Username = *input.Username
+	}
+
+	if input.FirstName != nil {
+		user.FirstName = *input.FirstName
+	}
+
+	if input.LastName != nil {
+		user.LastName = *input.LastName
+	}
+
+	return s.repo.UpdateUser(user)
 }
