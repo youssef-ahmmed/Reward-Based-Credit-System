@@ -66,13 +66,13 @@ CREATE TABLE core.product
     stock_quantity    INT  NOT NULL,
     is_offer          BOOLEAN     DEFAULT FALSE,
     image_url         TEXT,
-    tags              TEXT[], -- PostgreSQL array
+    tags              JSONB, -- PostgreSQL array
     is_active         BOOLEAN     DEFAULT TRUE,
     created_at        TIMESTAMPTZ DEFAULT now()
 );
 
 -- Redemptions
-CREATE TABLE core.redeem
+CREATE TABLE core.redemption
 (
     id         UUID PRIMARY KEY,
     user_id    UUID REFERENCES core.user (id),
