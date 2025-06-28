@@ -3,7 +3,7 @@ package user
 import "time"
 
 type User struct {
-	ID           string    `json:"id"`
+	ID           string    `json:"id" gorm:"primaryKey"`
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
 	Username     string    `json:"username"`
@@ -12,11 +12,14 @@ type User struct {
 	Role         string    `json:"role"`   // "user" or "admin"
 	Status       string    `json:"status"` // "suspended" or "active", "banned"
 	CreatedAt    time.Time `json:"created_at"`
+
+	Wallet Wallet `gorm:"foreignKey:UserID"`
 }
 
 type Wallet struct {
-	ID             string    `json:"id"`
-	UserID         string    `json:"user_id"`
+	ID             string `json:"id" gorm:"primaryKey"`
+	UserID         string `json:"user_id" gorm:"uniqueIndex"`
+	User           *User
 	PointsBalance  int       `json:"points_balance"`
 	CreditsBalance int       `json:"credits_balance"`
 	UpdatedAt      time.Time `json:"updated_at"`

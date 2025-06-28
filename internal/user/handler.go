@@ -145,3 +145,22 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Profile updated successfully"})
 }
+
+func (h *Handler) GetWallet(c *gin.Context) {
+	userID := c.GetString("userId")
+
+	wallet, err := h.service.GetWallet(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch wallet"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"wallet": gin.H{
+			"user_id":         wallet.UserID,
+			"points_balance":  wallet.PointsBalance,
+			"credits_balance": wallet.CreditsBalance,
+			"updated_at":      wallet.UpdatedAt.Format(time.RFC3339),
+		},
+	})
+}

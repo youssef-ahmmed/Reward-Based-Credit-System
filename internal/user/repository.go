@@ -1,6 +1,8 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Repository struct {
 	db *gorm.DB
@@ -52,4 +54,20 @@ func (r *Repository) IsUsernameTaken(username string) (bool, error) {
 
 func (r *Repository) UpdateUser(user *User) error {
 	return r.db.Save(user).Error
+}
+
+func (r *Repository) CreateWallet(wallet *Wallet) error {
+	return r.db.Create(wallet).Error
+}
+
+func (r *Repository) GetWalletByUserID(userID string) (*Wallet, error) {
+	var wallet Wallet
+	if err := r.db.Where("user_id = ?", userID).First(&wallet).Error; err != nil {
+		return nil, err
+	}
+	return &wallet, nil
+}
+
+func (r *Repository) UpdateWallet(wallet *Wallet) error {
+	return r.db.Save(wallet).Error
 }

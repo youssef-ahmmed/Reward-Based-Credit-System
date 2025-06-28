@@ -14,4 +14,5 @@ func RegisterModule(rg *gin.RouterGroup) {
 
 	RegisterAuthRoutes(rg, handler)
 	RegisterProfileRoutes(rg, handler)
+	RegisterWalletRoutes(rg, handler)
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -15,6 +16,8 @@ type Service interface {
 	ChangePassword(userID, currentPassword, newPassword string) error
 	GetProfile(userID string) (*UserDTO, error)
 	UpdateProfile(userID string, input UpdateProfileRequest) error
+	GetWallet(userID string) (*Wallet, error)
+	AddToWallet(userID string, credits int, points int) error
 }
 
 type service struct {
@@ -172,4 +175,40 @@ func (s *service) UpdateProfile(userID string, input UpdateProfileRequest) error
 	}
 
 	return s.repo.UpdateUser(user)
+}
+
+func (s *service) GetWallet(userID string) (*Wallet, error) {
+	wallet, err := s.repo.GetWalletByUserID(userID)
+	if err == nil {
+		return wallet, nil
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		newWallet := &Wallet{
+			ID:             uuid.NewString(),
+			UserID:         userID,
+			CreditsBalance: 0,
+			PointsBalance:  0,
+			UpdatedAt:      time.Now(),
+		}
+		if err := s.repo.CreateWallet(newWallet); err != nil {
+			return nil, err
+		}
+		return newWallet, nil
+	}
+
+	return nil, err
+}
+
+func (s *service) AddToWallet(userID string, credits int, points int) error {
+	wallet, err := s.repo.GetWalletByUserID(userID)
+	if err != nil {
+		return err
+	}
+
+	wallet.CreditsBalance += credits
+	wallet.PointsBalance += points
+	wallet.UpdatedAt = time.Now()
+
+	return s.repo.UpdateWallet(wallet)
 }
