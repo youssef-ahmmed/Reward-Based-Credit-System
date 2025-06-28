@@ -645,13 +645,7 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "product_id": 1,
-  "quantity": 1,
-  "shipping_address": {
-    "street": "123 Main St",
-    "city": "Cairo",
-    "country": "Egypt",
-    "postal_code": "12345"
-  }
+  "quantity": 1
 }
 ```
 
@@ -669,15 +663,8 @@ Authorization: Bearer <jwt_token>
     },
     "quantity": 1,
     "points_used": 500,
-    "status": "pending",
-    "shipping_address": {
-      "street": "123 Main St",
-      "city": "Cairo",
-      "country": "Egypt",
-      "postal_code": "12345"
-    },
-    "created_at": "2025-06-26T10:30:00Z",
-    "estimated_delivery": "2025-07-03T00:00:00Z"
+    "status": "completed",
+    "created_at": "2025-06-26T10:30:00Z"
   }
 }
 ```
