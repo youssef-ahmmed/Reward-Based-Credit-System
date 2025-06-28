@@ -555,7 +555,43 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-### 7.2 Create Category
+### 7.2 Get Category Details by ID
+**`GET /categories/:id/details`**
+
+**Query Parameters:**
+- None
+
+**Response:**
+- `200 OK`:
+```json
+{
+  "category": {
+    "id": "f1b35bc9-26f2-4104-a8b8-e79190f51a69",
+    "name": "Smartphones",
+    "description": "All smartphone models",
+    "parent_category_id": "e8bfe5ba-5624-4ba5-b895-0a99fe45e293"
+  },
+  "products": [
+    {
+      "id": "a622e3ae-fb64-4d30-982c-a669327c6606",
+      "name": "iPhone 15 Pro",
+      "description": "Latest Apple iPhone with A17 chip",
+      "category": {
+        "id": "f1b35bc9-26f2-4104-a8b8-e79190f51a69",
+        "name": "Smartphones"
+      },
+      "redemption_points": 3000,
+      "stock_quantity": 6,
+      "is_offer": true,
+      "image_url": "https://example.com/iphone15.jpg",
+      "tags": ["smartphone", "apple", "ios"],
+      "created_at": "2025-06-28T17:00:00Z"
+    }
+  ]
+}
+```
+
+### 7.3 Create Category
 **`POST /categories`** *(Admin Only)*
 
 **Request Body:**
@@ -572,7 +608,7 @@ Authorization: Bearer <jwt_token>
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 
-### 7.3 Update Category
+### 7.4 Update Category
 **`PUT /categories/:id`** *(Admin Only)*
 
 **Request Body:**
@@ -590,7 +626,7 @@ Authorization: Bearer <jwt_token>
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Category not found
 
-### 7.4 Delete Category
+### 7.5 Delete Category
 **`DELETE /categories/:id`** *(Admin Only)*
 
 **Response:**
