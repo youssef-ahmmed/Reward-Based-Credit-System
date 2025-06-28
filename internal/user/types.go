@@ -1,11 +1,12 @@
 package user
 
 type SignUpInput struct {
-	FirstName string
-	LastName  string
-	Username  string
-	Email     string
-	Password  string
+	FirstName string `json:"firstName" binding:"required"`
+	LastName  string `json:"lastName" binding:"required"`
+	Username  string `json:"username" binding:"required"`
+	Email     string `json:"email" binding:"required,email"`
+	Password  string `json:"password" binding:"required,min=8"`
+	Role      string `json:"role"`
 }
 
 type LoginInput struct {
@@ -24,6 +25,7 @@ type UserDTO struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
+	Role      string `json:"role"`
 }
 
 type RefreshRequest struct {

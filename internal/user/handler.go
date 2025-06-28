@@ -21,14 +21,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := h.service.SignUp(SignUpInput{
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Username:  req.Username,
-		Email:     req.Email,
-		Password:  req.Password,
-	})
-
+	user, err := h.service.SignUp(req)
 	if err != nil {
 		if err.Error() == "email or username already exists" {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
@@ -46,6 +39,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 			"last_name":  user.LastName,
 			"username":   user.Username,
 			"email":      user.Email,
+			"role":       user.Role,
 			"created_at": user.CreatedAt.Format(time.RFC3339),
 		},
 	})
@@ -95,7 +89,7 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userId")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
@@ -115,7 +109,7 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 }
 
 func (h *Handler) GetProfile(c *gin.Context) {
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userId")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
@@ -131,7 +125,7 @@ func (h *Handler) GetProfile(c *gin.Context) {
 }
 
 func (h *Handler) UpdateProfile(c *gin.Context) {
-	userID := c.GetString("user_id")
+	userID := c.GetString("userId")
 
 	var req UpdateProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

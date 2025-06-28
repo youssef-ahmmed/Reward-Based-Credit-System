@@ -40,6 +40,11 @@ func (s *service) SignUp(input SignUpInput) (*User, error) {
 		return nil, err
 	}
 
+	role := input.Role
+	if role != "admin" {
+		role = "user"
+	}
+
 	user := &User{
 		ID:           uuid.NewString(),
 		FirstName:    input.FirstName,
@@ -47,7 +52,7 @@ func (s *service) SignUp(input SignUpInput) (*User, error) {
 		Username:     input.Username,
 		Email:        input.Email,
 		PasswordHash: string(hashedPwd),
-		Role:         "user",
+		Role:         role,
 		Status:       "active",
 		CreatedAt:    time.Now(),
 	}
@@ -70,7 +75,7 @@ func (s *service) Login(input LoginInput) (*LoginResponse, error) {
 		return nil, errors.New("invalid credentials")
 	}
 
-	access, refresh, err := utils.GenerateTokens(user.ID, user.Email)
+	access, refresh, err := utils.GenerateTokens(user.ID, user.Email, user.Role)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +88,7 @@ func (s *service) Login(input LoginInput) (*LoginResponse, error) {
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Email:     user.Email,
+			Role:      user.Role,
 		},
 	}, nil
 }
@@ -93,10 +99,11 @@ func (s *service) RefreshToken(refreshToken string) (*TokenPair, error) {
 		return nil, err
 	}
 
-	userID := claims["user_id"].(string)
+	userID := claims["userId"].(string)
 	email := claims["email"].(string)
+	role := claims["role"].(string)
 
-	accessToken, refreshToken, err := utils.GenerateTokens(userID, email)
+	accessToken, refreshToken, err := utils.GenerateTokens(userID, email, role)
 	if err != nil {
 		return nil, err
 	}
