@@ -1,12 +1,15 @@
 # Reward System - Complete API Design
 
 ## Base URL
+
 ```
 https://api.4sale-rewards.com/api/v1
 ```
 
 ## Authentication
+
 All protected endpoints require JWT token in the Authorization header:
+
 ```
 Authorization: Bearer <jwt_token>
 ```
@@ -16,13 +19,15 @@ Authorization: Bearer <jwt_token>
 ## 1. User Authentication Routes
 
 ### 1.1 User Registration
+
 **`POST /users/signup`**
 
 **Request Body:**
+
 ```json
 {
   "first_name": "John",
-  "last_name": "Doe", 
+  "last_name": "Doe",
   "username": "johndoe",
   "email": "john@example.com",
   "password": "SecurePass123!"
@@ -30,7 +35,9 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: User successfully created
+
 ```json
 {
   "message": "User created successfully",
@@ -44,14 +51,17 @@ Authorization: Bearer <jwt_token>
   }
 }
 ```
+
 - `400 Bad Request`: Invalid request body
 - `409 Conflict`: Username or email already exists
 - `500 Internal Server Error`
 
 ### 1.2 User Login
+
 **`POST /users/login`**
 
 **Request Body:**
+
 ```json
 {
   "email": "john@example.com",
@@ -60,7 +70,9 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Login successful
+
 ```json
 {
   "message": "Login successful",
@@ -74,13 +86,16 @@ Authorization: Bearer <jwt_token>
   }
 }
 ```
+
 - `401 Unauthorized`: Invalid credentials
 - `500 Internal Server Error`
 
 ### 1.3 Forgot Password
+
 **`POST /users/forgot-password`**
 
 **Request Body:**
+
 ```json
 {
   "email": "john@example.com"
@@ -88,19 +103,24 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Password reset email sent
+
 ```json
 {
   "message": "Password reset instructions sent to your email"
 }
 ```
+
 - `404 Not Found`: Email not found
 - `500 Internal Server Error`
 
 ### 1.4 Reset Password
+
 **`POST /users/reset-password/:token`**
 
 **Request Body:**
+
 ```json
 {
   "password": "NewSecurePass123!",
@@ -109,15 +129,18 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Password reset successful
 - `400 Bad Request`: Invalid token or passwords don't match
 - `401 Unauthorized`: Token expired
 - `500 Internal Server Error`
 
 ### 1.5 Change Password
+
 **`PUT /users/change-password`** *(Protected)*
 
 **Request Body:**
+
 ```json
 {
   "current_password": "OldPass123!",
@@ -127,6 +150,7 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Password changed successfully
 - `400 Bad Request`: Invalid request body
 - `401 Unauthorized`: Current password incorrect
@@ -137,10 +161,13 @@ Authorization: Bearer <jwt_token>
 ## 2. User Profile Routes
 
 ### 2.1 Get User Profile
+
 **`GET /users/profile`** *(Protected)*
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "user": {
@@ -155,9 +182,11 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 2.2 Update User Profile
+
 **`PUT /users/profile`** *(Protected)*
 
 **Request Body:**
+
 ```json
 {
   "first_name": "John",
@@ -167,6 +196,7 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Profile updated successfully
 - `400 Bad Request`: Invalid data
 - `409 Conflict`: Username already exists
@@ -176,15 +206,19 @@ Authorization: Bearer <jwt_token>
 ## 3. Credit Package Routes
 
 ### 3.1 Get All Credit Packages
+
 **`GET /credit-packages`**
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `active` (optional): Filter by active status (true/false)
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "packages": [
@@ -217,16 +251,20 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 3.2 Get Credit Package by ID
+
 **`GET /credit-packages/:id`**
 
 **Response:**
+
 - `200 OK`: Package details
 - `404 Not Found`: Package not found
 
 ### 3.3 Create Credit Package
+
 **`POST /credit-packages`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "Premium Package",
@@ -238,14 +276,17 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: Package created successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 
 ### 3.4 Update Credit Package
+
 **`PUT /credit-packages/:id`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "Premium Package Updated",
@@ -257,15 +298,18 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Package updated successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Package not found
 
 ### 3.5 Delete Credit Package
+
 **`DELETE /credit-packages/:id`** *(Admin Only)*
 
 **Response:**
+
 - `204 No Content`: Package deleted successfully
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Package not found
@@ -275,9 +319,11 @@ Authorization: Bearer <jwt_token>
 ## 4. Purchase Routes
 
 ### 4.1 Create Purchase
+
 **`POST /purchases`** *(Protected)*
 
 **Request Body:**
+
 ```json
 {
   "credit_package_id": 2,
@@ -291,7 +337,9 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: Purchase created successfully
+
 ```json
 {
   "purchase": {
@@ -306,20 +354,25 @@ Authorization: Bearer <jwt_token>
   }
 }
 ```
+
 - `400 Bad Request`: Invalid data
 - `402 Payment Required`: Payment failed
 - `404 Not Found`: Package not found
 
 ### 4.2 Get User Purchases
+
 **`GET /purchases`** *(Protected)*
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `status` (optional): Filter by status
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "purchases": [
@@ -347,9 +400,11 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 4.3 Get Purchase by ID
+
 **`GET /purchases/:id`** *(Protected)*
 
 **Response:**
+
 - `200 OK`: Purchase details
 - `403 Forbidden`: Not owner of purchase
 - `404 Not Found`: Purchase not found
@@ -359,10 +414,13 @@ Authorization: Bearer <jwt_token>
 ## 5. Wallet Routes
 
 ### 5.1 Get User Wallet Info
+
 **`GET /wallets`** *(Protected)*
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "wallet": {
@@ -379,9 +437,11 @@ Authorization: Bearer <jwt_token>
 ## 6. Product Routes
 
 ### 6.1 Get All Products
+
 **`GET /products`**
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `category_id` (optional): Filter by category
@@ -392,7 +452,9 @@ Authorization: Bearer <jwt_token>
 - `sort_order` (optional): Sort order (asc, desc)
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "products": [
@@ -421,16 +483,20 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 6.2 Get Product by ID
+
 **`GET /products/:id`**
 
 **Response:**
+
 - `200 OK`: Product details
 - `404 Not Found`: Product not found
 
 ### 6.3 Search Products
+
 **`GET /products/search`**
 
 **Query Parameters:**
+
 - `query` (required): Search query
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
@@ -440,7 +506,9 @@ Authorization: Bearer <jwt_token>
 - `max_points` (optional): Maximum reward points
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "products": [
@@ -473,9 +541,11 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 6.4 Create Product
+
 **`POST /products`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "iPhone 15 Pro",
@@ -488,14 +558,17 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: Product created successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 
 ### 6.5 Update Product
+
 **`PUT /products/:id`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "iPhone 15 Pro Updated",
@@ -508,15 +581,18 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Product updated successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Product not found
 
 ### 6.6 Delete Product
+
 **`DELETE /products/:id`** *(Admin Only)*
 
 **Response:**
+
 - `204 No Content`: Product deleted successfully
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Product not found
@@ -526,14 +602,18 @@ Authorization: Bearer <jwt_token>
 ## 7. Category Routes
 
 ### 7.1 Get All Categories
+
 **`GET /categories`**
 
 **Query Parameters:**
+
 - `parent_id` (optional): Filter by parent category
 - `include_children` (optional): Include child categories (true/false)
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "categories": [
@@ -556,13 +636,17 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 7.2 Get Category Details by ID
+
 **`GET /categories/:id/details`**
 
 **Query Parameters:**
+
 - None
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "category": {
@@ -584,7 +668,11 @@ Authorization: Bearer <jwt_token>
       "stock_quantity": 6,
       "is_offer": true,
       "image_url": "https://example.com/iphone15.jpg",
-      "tags": ["smartphone", "apple", "ios"],
+      "tags": [
+        "smartphone",
+        "apple",
+        "ios"
+      ],
       "created_at": "2025-06-28T17:00:00Z"
     }
   ]
@@ -592,9 +680,11 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 7.3 Create Category
+
 **`POST /categories`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "Gaming",
@@ -604,14 +694,17 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: Category created successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 
 ### 7.4 Update Category
+
 **`PUT /categories/:id`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "name": "Gaming Updated",
@@ -621,15 +714,18 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Category updated successfully
 - `400 Bad Request`: Invalid data
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Category not found
 
 ### 7.5 Delete Category
+
 **`DELETE /categories/:id`** *(Admin Only)*
 
 **Response:**
+
 - `204 No Content`: Category deleted successfully
 - `403 Forbidden`: Admin access required
 - `404 Not Found`: Category not found
@@ -639,9 +735,11 @@ Authorization: Bearer <jwt_token>
 ## 8. Redemption Routes
 
 ### 8.1 Create Redemption
+
 **`POST /redemptions`** *(Protected)*
 
 **Request Body:**
+
 ```json
 {
   "product_id": 1,
@@ -650,7 +748,9 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `201 Created`: Redemption created successfully
+
 ```json
 {
   "redemption": {
@@ -668,20 +768,25 @@ Authorization: Bearer <jwt_token>
   }
 }
 ```
+
 - `400 Bad Request`: Invalid data or insufficient points
 - `404 Not Found`: Product not found
 - `409 Conflict`: Insufficient stock
 
 ### 8.2 Get User Redemptions
+
 **`GET /redemptions`** *(Protected)*
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `status` (optional): Filter by status
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "redemptions": [
@@ -708,18 +813,22 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 8.3 Get Redemption by ID
+
 **`GET /redemptions/:id`** *(Protected)*
 
 **Response:**
+
 - `200 OK`: Redemption details
 - `403 Forbidden`: Not owner of redemption
 - `404 Not Found`: Redemption not found
 
 ### 8.4 Cancel Redemption
+
 **`DELETE /redemptions/:id`** *(Protected)*
 
 **Response:**
-- `200 OK`: Redemption cancelled (if status allows)
+
+- `200 OK`: Redemption canceled (if status allows)
 - `400 Bad Request`: Cannot cancel redemption
 - `403 Forbidden`: Not owner of redemption
 - `404 Not Found`: Redemption not found
@@ -729,10 +838,13 @@ Authorization: Bearer <jwt_token>
 ## 9. Admin Routes
 
 ### 9.1 Get Admin Dashboard Stats
+
 **`GET /admin/dashboard`** *(Admin Only)*
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "stats": {
@@ -755,9 +867,11 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 9.2 Get All Users
+
 **`GET /admin/users`** *(Admin Only)*
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `search` (optional): Search by name or email
@@ -765,12 +879,15 @@ Authorization: Bearer <jwt_token>
 - `sort_order` (optional): Sort order (asc, desc)
 
 **Response:**
+
 - `200 OK`: List of users with pagination
 
 ### 9.3 Get All Purchases
+
 **`GET /admin/purchases`** *(Admin Only)*
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `status` (optional): Filter by status
@@ -778,12 +895,15 @@ Authorization: Bearer <jwt_token>
 - `date_to` (optional): Filter to date
 
 **Response:**
+
 - `200 OK`: List of purchases with pagination
 
 ### 9.4 Get All Redemptions
+
 **`GET /admin/redemptions`** *(Admin Only)*
 
 **Query Parameters:**
+
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 20)
 - `status` (optional): Filter by status
@@ -791,12 +911,15 @@ Authorization: Bearer <jwt_token>
 - `date_to` (optional): Filter to date
 
 **Response:**
+
 - `200 OK`: List of redemptions with pagination
 
 ### 9.5 Update Redemption Status
+
 **`PUT /admin/redemptions/:id/status`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
   "status": "delivered",
@@ -805,39 +928,63 @@ Authorization: Bearer <jwt_token>
 ```
 
 **Response:**
+
 - `200 OK`: Status updated successfully
 - `400 Bad Request`: Invalid status
 - `404 Not Found`: Redemption not found
 
 ### 9.6 Manage User Credits
+
 **`POST /admin/users/:id/credits`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
-  "action": "add", // or "subtract"
-  "amount": 100,
-  "reason": "Bonus credits for loyal customer"
+  "action": "add",
+  "amount": 100
 }
 ```
 
 **Response:**
+
 - `200 OK`: Credits updated successfully
 - `400 Bad Request`: Invalid data
 - `404 Not Found`: User not found
 
-### 9.7 Moderate Users
+### 9.7 Manage User Points
+
+**`POST /admin/users/:id/points`** *(Admin Only)*
+**Request Body:**
+
+```json
+{
+  "action": "add",
+  "amount": 100
+}
+```
+
+*Response:**
+
+- `200 OK`: Points updated successfully
+- `400 Bad Request`: Invalid data
+- `404 Not Found`: User not found
+
+### 9.8 Moderate Users
+
 **`PUT /admin/users/:id/status`** *(Admin Only)*
 
 **Request Body:**
+
 ```json
 {
-  "status": "suspended", // or "active", "banned"
+  "status": "suspended",
   "reason": "Violation of terms of service"
 }
 ```
 
 **Response:**
+
 - `200 OK`: User status updated
 - `400 Bad Request`: Invalid status
 - `404 Not Found`: User not found
@@ -846,27 +993,38 @@ Authorization: Bearer <jwt_token>
 
 ## 10. AI Recommendation Routes
 
-### 10.1 Get Product Recommendations
+### Get Product Recommendations
+
 **`POST /ai/recommendations`** *(Protected)*
 
 **Request Body:**
+
 ```json
 {
   "user_preferences": {
-    "categories": [1, 2, 3],
+    "categories": [
+      1,
+      2,
+      3
+    ],
     "price_range": {
       "min_points": 100,
       "max_points": 1000
     },
-    "exclude_categories": [4, 5]
+    "exclude_categories": [
+      4,
+      5
+    ]
   },
   "limit": 5,
-  "context": "homepage" // or "search", "category", "product_page"
+  "context": "homepage"
 }
 ```
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "recommendations": [
@@ -895,25 +1053,18 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-### 10.2 Get Smart Recommendations
-**`GET /ai/smart-recommendations`** *(Protected)*
-
-**Query Parameters:**
-- `context` (optional): Context for recommendations
-- `limit` (optional): Number of recommendations (default: 5)
-
-**Response:**
-- `200 OK`: Personalized recommendations based on user behavior
-
 ---
 
 ## 11. Utility Routes
 
 ### 11.1 Health Check
+
 **`GET /health`**
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "status": "healthy",
@@ -928,10 +1079,13 @@ Authorization: Bearer <jwt_token>
 ```
 
 ### 11.2 API Version
+
 **`GET /version`**
 
 **Response:**
+
 - `200 OK`:
+
 ```json
 {
   "version": "1.0.0",
@@ -988,10 +1142,12 @@ All error responses follow this format:
 ## Pagination
 
 All list endpoints support pagination with these query parameters:
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 20, max: 100)
 
 Pagination response format:
+
 ```json
 {
   "pagination": {
@@ -1008,6 +1164,7 @@ Pagination response format:
 ## Filtering and Sorting
 
 Most list endpoints support filtering and sorting:
+
 - `sort_by`: Field to sort by
 - `sort_order`: `asc` or `desc`
 - `filter[field]`: Filter by field value
@@ -1016,6 +1173,7 @@ Most list endpoints support filtering and sorting:
 ## Webhooks (Optional)
 
 For real-time notifications:
+
 - `POST /webhooks/purchase-completed`
 - `POST /webhooks/redemption-status-changed`
 - `POST /webhooks/user-registered`
