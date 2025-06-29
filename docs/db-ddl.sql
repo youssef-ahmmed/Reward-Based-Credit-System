@@ -78,5 +78,6 @@ CREATE TABLE core.redemption
     user_id    UUID REFERENCES core.user (id),
     product_id UUID REFERENCES core.product (id) ON DELETE SET NULL,
     quantity   INT  NOT NULL,
+    status     TEXT,
     created_at TIMESTAMPTZ DEFAULT now()
 );
