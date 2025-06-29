@@ -2,7 +2,6 @@ package main
 
 import (
 	"Start/internal/app"
-	"Start/internal/shared/database"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -10,9 +9,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	db := database.GetDB()
-
-	app.RegisterModules(r, db)
+	app.RegisterModules(r)
 
 	err := r.Run(":8080")
 	if err != nil {

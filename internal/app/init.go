@@ -1,12 +1,14 @@
 package app
 
 import (
+	"Start/internal/shared/database"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func RegisterModules(r *gin.Engine, db *gorm.DB) {
+func RegisterModules(r *gin.Engine) {
 	apiGroup := r.Group("/api")
+
+	db := database.GetDB()
 
 	RegisterAdminModule(apiGroup, db)
 	RegisterAuthModule(apiGroup, db)
