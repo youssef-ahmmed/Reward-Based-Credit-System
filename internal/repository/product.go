@@ -83,3 +83,20 @@ func (r *Repository) GetProductByID(id string) (*store.Product, error) {
 	}
 	return &p, err
 }
+
+func (r *Repository) FetchProductsByPreferences(includeCats, excludeCats []string, minPoints, maxPoints, limit int) ([]store.Product, error) {
+	query := r.db.Preload("Category").
+		Where("redemption_points >= ? AND redemption_points <= ?", minPoints, maxPoints).
+		Limit(limit)
+
+	if len(includeCats) > 0 {
+		query = query.Where("category_id IN ?", includeCats)
+	}
+	if len(excludeCats) > 0 {
+		query = query.Where("category_id NOT IN ?", excludeCats)
+	}
+
+	var products []store.Product
+	err := query.Find(&products).Error
+	return products, err
+}

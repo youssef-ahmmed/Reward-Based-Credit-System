@@ -19,4 +19,5 @@ func RegisterModules(r *gin.Engine) {
 	RegisterPurchaseModule(apiGroup, db)
 	RegisterRedemptionModule(apiGroup, db)
 	RegisterWalletModule(apiGroup, db)
+	RegisterAIModule(apiGroup, db)
 }

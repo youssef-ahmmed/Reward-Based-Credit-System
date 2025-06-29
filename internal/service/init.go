@@ -71,3 +71,7 @@ type AdminService interface {
 	ManageUserPoints(userID, action string, amount int) error
 	UpdateUserStatus(userID, status string) error
 }
+
+type AIService interface {
+	RecommendProducts(req types.RecommendationRequest) (*types.RecommendationResponse, error)
+}
