@@ -14,6 +14,7 @@ func ToPurchaseResponse(p *store.Purchase, pkg *store.CreditPackage) *types.Purc
 		UserID:          p.UserID,
 		CreditPackageID: p.CreditPackageID,
 		Status:          p.Status,
+		Credits:         p.Credits,
 		CreatedAt:       p.CreatedAt.Format(time.RFC3339),
 		CreditPackageInfo: &types.SimplePackageInfo{
 			ID:    pkg.ID,

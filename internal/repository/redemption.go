@@ -2,6 +2,7 @@ package repository
 
 import (
 	"Start/internal/store"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -46,4 +47,38 @@ func (r *Repository) GetRedemptionByID(id string) (*store.Redemption, error) {
 		return nil, err
 	}
 	return &rdm, nil
+}
+
+func (r *Repository) FetchAllRedemptions(page, limit int, status, dateFrom, dateTo string) ([]*store.Redemption, int, error) {
+	var redemptions []*store.Redemption
+	var count int64
+
+	query := r.db.Preload("Product").Model(&store.Redemption{})
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		query = query.Where("created_at <= ?", dateTo)
+	}
+	query.Count(&count)
+
+	err := query.Order("created_at desc").Offset((page - 1) * limit).Limit(limit).Find(&redemptions).Error
+	return redemptions, int(count), err
+}
+
+func (r *Repository) UpdateRedemptionStatus(id, status string) error {
+	return r.db.Model(&store.Redemption{}).Where("id = ?", id).
+		Updates(map[string]interface{}{"status": status}).Error
+}
+
+func (r *Repository) FindRedemptionByID(id string) (*store.Redemption, error) {
+	var redemption store.Redemption
+	err := r.db.First(&redemption, "id = ?", id).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return &redemption, err
 }

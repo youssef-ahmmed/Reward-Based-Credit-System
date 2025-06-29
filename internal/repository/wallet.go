@@ -38,6 +38,16 @@ func (r *Repository) UpdateWallet(wallet *store.Wallet) error {
 	return r.db.Save(wallet).Error
 }
 
+func (r *Repository) UpdateWalletCredits(userID string, amount int) error {
+	return r.db.Model(&store.Wallet{}).Where("user_id = ?", userID).
+		UpdateColumn("credits_balance", gorm.Expr("credits_balance + ?", amount)).Error
+}
+
+func (r *Repository) UpdateWalletPoints(userID string, amount int) error {
+	return r.db.Model(&store.Wallet{}).Where("user_id = ?", userID).
+		Update("points_balance", gorm.Expr("points_balance + ?", amount)).Error
+}
+
 func (r *Repository) DeductPointsTx(tx *gorm.DB, userID string, points int) error {
 	return tx.Model(&store.Wallet{}).Where("user_id = ? AND points_balance >= ?", userID, points).
 		UpdateColumn("points_balance", gorm.Expr("points_balance - ?", points)).Error
