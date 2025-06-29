@@ -568,7 +568,7 @@ Authorization: Bearer <jwt_token>
   "category": {
     "id": "f1b35bc9-26f2-4104-a8b8-e79190f51a69",
     "name": "Smartphones",
-    "description": "All smartphone models",
+    "description": "All smartphone store",
     "parent_category_id": "e8bfe5ba-5624-4ba5-b895-0a99fe45e293"
   },
   "products": [
