@@ -1,11 +1,12 @@
-package product
+package api
 
 import (
+	"Start/internal/handler"
 	"Start/internal/shared/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCategoryRoutes(rg *gin.RouterGroup, handler *Handler) {
+func RegisterCategoryRoutes(rg *gin.RouterGroup, handler *handler.CategoryHandler) {
 	categories := rg.Group("/categories")
 
 	categories.GET("", handler.GetAllCategories)
