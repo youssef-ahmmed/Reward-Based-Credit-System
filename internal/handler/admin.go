@@ -106,7 +106,7 @@ func (h *AdminHandler) UpdateRedemptionStatus(c *gin.Context) {
 	}
 	id := c.Param("id")
 
-	if err := h.service.UpdateRedemptionStatus(id, req.Status, req.Notes); err != nil {
+	if err := h.service.UpdateRedemptionStatus(id, req.Status); err != nil {
 		switch err.Error() {
 		case "not found":
 			c.JSON(http.StatusNotFound, gin.H{"error": "Redemption not found"})
@@ -144,6 +144,31 @@ func (h *AdminHandler) ManageUserCredits(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Credits updated successfully"})
+}
+
+func (h *AdminHandler) ManageUserPoints(c *gin.Context) {
+	userID := c.Param("id")
+
+	var req types.ManagePointsRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err := h.service.ManageUserPoints(userID, req.Action, req.Amount)
+	if err != nil {
+		switch err.Error() {
+		case "user not found":
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		case "invalid action":
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid points action"})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update points"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Points updated successfully"})
 }
 
 func (h *AdminHandler) ModerateUser(c *gin.Context) {

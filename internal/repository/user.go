@@ -70,65 +70,6 @@ func (r *Repository) FetchAllUsers(page, limit int, search, sortBy, sortOrder st
 	return users, int(count), err
 }
 
-func (r *Repository) FetchAllPurchases(page, limit int, status, dateFrom, dateTo string) ([]*store.Purchase, int, error) {
-	var purchases []*store.Purchase
-	var count int64
-
-	query := r.db.Model(&store.Purchase{}).
-		Preload("CreditPackage")
-	if status != "" {
-		query = query.Where("status = ?", status)
-	}
-	if dateFrom != "" {
-		query = query.Where("created_at >= ?", dateFrom)
-	}
-	if dateTo != "" {
-		query = query.Where("created_at <= ?", dateTo)
-	}
-	err := query.Count(&count).Error
-	if err != nil {
-		return nil, 0, err
-	}
-
-	err = query.
-		Offset((page - 1) * limit).
-		Limit(limit).
-		Order("created_at DESC").
-		Find(&purchases).Error
-
-	return purchases, int(count), err
-}
-
-func (r *Repository) FetchAllRedemptions(page, limit int, status, dateFrom, dateTo string) ([]*store.Redemption, int, error) {
-	var redemptions []*store.Redemption
-	var count int64
-
-	query := r.db.Preload("Product").Model(&store.Redemption{})
-	if status != "" {
-		query = query.Where("status = ?", status)
-	}
-	if dateFrom != "" {
-		query = query.Where("created_at >= ?", dateFrom)
-	}
-	if dateTo != "" {
-		query = query.Where("created_at <= ?", dateTo)
-	}
-	query.Count(&count)
-
-	err := query.Order("created_at desc").Offset((page - 1) * limit).Limit(limit).Find(&redemptions).Error
-	return redemptions, int(count), err
-}
-
-func (r *Repository) UpdateRedemptionStatus(id, status, notes string) error {
-	return r.db.Model(&store.Redemption{}).Where("id = ?", id).
-		Updates(map[string]interface{}{"status": status, "admin_notes": notes}).Error
-}
-
-func (r *Repository) UpdateWalletCredits(userID string, amount int) error {
-	return r.db.Model(&store.Wallet{}).Where("user_id = ?", userID).
-		UpdateColumn("credits_balance", gorm.Expr("credits_balance + ?", amount)).Error
-}
-
 func (r *Repository) UpdateUserStatus(userID, status string) error {
 	return r.db.Model(&store.User{}).Where("id = ?", userID).
 		Updates(map[string]interface{}{"status": status}).Error
@@ -141,13 +82,4 @@ func (r *Repository) FindUserByID(id string) (*store.User, error) {
 		return nil, nil
 	}
 	return &user, err
-}
-
-func (r *Repository) FindRedemptionByID(id string) (*store.Redemption, error) {
-	var redemption store.Redemption
-	err := r.db.First(&redemption, "id = ?", id).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
-	return &redemption, err
 }

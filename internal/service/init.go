@@ -66,7 +66,8 @@ type AdminService interface {
 	GetAllUsers(page, limit int, search, sortBy, sortOrder string) ([]*types.UserDTO, int, error)
 	GetAllPurchases(page, limit int, status, dateFrom, dateTo string) ([]*types.PurchaseResponse, int, error)
 	GetAllRedemptions(page, limit int, status, dateFrom, dateTo string) ([]*types.RedemptionResponse, int, error)
-	UpdateRedemptionStatus(id, status, notes string) error
+	UpdateRedemptionStatus(id string, status string) error
 	ManageUserCredits(userID, action string, amount int) error
+	ManageUserPoints(userID, action string, amount int) error
 	UpdateUserStatus(userID, status string) error
 }

@@ -23,7 +23,6 @@ type DashboardStatsResponse struct {
 
 type UpdateRedemptionStatusRequest struct {
 	Status string `json:"status" binding:"required"`
-	Notes  string `json:"notes"`
 }
 
 type ManageCreditsRequest struct {
@@ -34,4 +33,9 @@ type ManageCreditsRequest struct {
 type ModerateUserRequest struct {
 	Status string `json:"status" binding:"required"` // active, suspended, banned
 	Reason string `json:"reason"`
+}
+
+type ManagePointsRequest struct {
+	Action string `json:"action" binding:"required"` // "add" or "subtract"
+	Amount int    `json:"amount" binding:"required,min=1"`
 }

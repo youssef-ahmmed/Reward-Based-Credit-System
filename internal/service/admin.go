@@ -85,7 +85,7 @@ func (s *adminService) GetAllRedemptions(page, limit int, status, dateFrom, date
 	return result, total, nil
 }
 
-func (s *adminService) UpdateRedemptionStatus(id, status, notes string) error {
+func (s *adminService) UpdateRedemptionStatus(id string, status string) error {
 	if status != "pending" && status != "delivered" && status != "cancelled" {
 		return errors.New("invalid status")
 	}
@@ -98,7 +98,7 @@ func (s *adminService) UpdateRedemptionStatus(id, status, notes string) error {
 		return errors.New("not found")
 	}
 
-	return s.repo.UpdateRedemptionStatus(id, status, notes)
+	return s.repo.UpdateRedemptionStatus(id, status)
 }
 
 func (s *adminService) ManageUserCredits(userID, action string, amount int) error {
@@ -118,6 +118,25 @@ func (s *adminService) ManageUserCredits(userID, action string, amount int) erro
 		return s.repo.UpdateWalletCredits(userID, amount)
 	}
 	return s.repo.UpdateWalletCredits(userID, -amount)
+}
+
+func (s *adminService) ManageUserPoints(userID, action string, amount int) error {
+	if action != "add" && action != "subtract" {
+		return errors.New("invalid action")
+	}
+
+	user, err := s.repo.FindUserByID(userID)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+
+	if action == "add" {
+		return s.repo.UpdateWalletPoints(userID, amount)
+	}
+	return s.repo.UpdateWalletPoints(userID, -amount)
 }
 
 func (s *adminService) UpdateUserStatus(userID, status string) error {
