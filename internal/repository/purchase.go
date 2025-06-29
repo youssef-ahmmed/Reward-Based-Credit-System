@@ -50,3 +50,32 @@ func (r *Repository) SumCreditsIssued() (int, error) {
 	err := r.db.Model(&store.Purchase{}).Select("SUM(credits)").Scan(&total).Error
 	return total, err
 }
+
+func (r *Repository) FetchAllPurchases(page, limit int, status, dateFrom, dateTo string) ([]*store.Purchase, int, error) {
+	var purchases []*store.Purchase
+	var count int64
+
+	query := r.db.Model(&store.Purchase{}).
+		Preload("CreditPackage")
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		query = query.Where("created_at <= ?", dateTo)
+	}
+	err := query.Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = query.
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Order("created_at DESC").
+		Find(&purchases).Error
+
+	return purchases, int(count), err
+}

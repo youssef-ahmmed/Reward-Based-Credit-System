@@ -11,6 +11,7 @@ type PurchaseResponse struct {
 	UserID            string             `json:"userId"`
 	CreditPackageID   string             `json:"creditPackageId"`
 	Status            string             `json:"status"`
+	Credits           int                `json:"credits"`
 	CreatedAt         string             `json:"createdAt"`
 	CreditPackageInfo *SimplePackageInfo `json:"creditPackage,omitempty"`
 }

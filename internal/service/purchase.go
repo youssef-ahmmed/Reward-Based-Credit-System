@@ -30,6 +30,8 @@ func (s *purchaseResponse) CreatePurchase(userID string, input types.CreatePurch
 	p := &store.Purchase{
 		ID:              uuid.NewString(),
 		UserID:          userID,
+		Status:          "completed",
+		Credits:         pkg.Credits,
 		CreditPackageID: input.CreditPackageID,
 		CreatedAt:       time.Now(),
 	}
