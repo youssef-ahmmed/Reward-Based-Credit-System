@@ -17,14 +17,6 @@ func NewAdminHandler(service service.AdminService) *AdminHandler {
 	return &AdminHandler{service}
 }
 
-// GetAdminDashboard godoc
-// @Summary Get admin dashboard stats
-// @Tags Admin
-// @Security BearerAuth
-// @Produce json
-// @Success 200 {object} types.DashboardStatsResponse
-// @Failure 500 {object} map[string]string
-// @Router /admin/dashboard [get]
 func (h *AdminHandler) GetAdminDashboard(c *gin.Context) {
 	stats, err := h.service.GetAdminDashboardStats()
 	if err != nil {
@@ -34,19 +26,6 @@ func (h *AdminHandler) GetAdminDashboard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"stats": stats})
 }
 
-// GetAllUsers godoc
-// @Summary Get all users with pagination, filtering and sorting
-// @Tags Admin
-// @Security BearerAuth
-// @Produce json
-// @Param page query int false "Page number"
-// @Param limit query int false "Items per page"
-// @Param search query string false "Search keyword"
-// @Param sort_by query string false "Sort by field"
-// @Param sort_order query string false "Sort order (asc/desc)"
-// @Success 200 {object} map[string]interface{}
-// @Failure 500 {object} map[string]string
-// @Router /admin/users [get]
 func (h *AdminHandler) GetAllUsers(c *gin.Context) {
 	page := utils.ParseIntQuery(c, c.Query("page"), 1)
 	limit := utils.ParseIntQuery(c, c.Query("limit"), 20)
@@ -71,19 +50,6 @@ func (h *AdminHandler) GetAllUsers(c *gin.Context) {
 	})
 }
 
-// GetAllPurchases godoc
-// @Summary Get all purchases with filters
-// @Tags Admin
-// @Security BearerAuth
-// @Produce json
-// @Param page query int false "Page number"
-// @Param limit query int false "Items per page"
-// @Param status query string false "Purchase status"
-// @Param date_from query string false "Start date"
-// @Param date_to query string false "End date"
-// @Success 200 {object} map[string]interface{}
-// @Failure 500 {object} map[string]string
-// @Router /admin/purchases [get]
 func (h *AdminHandler) GetAllPurchases(c *gin.Context) {
 	page := utils.ParseIntQuery(c, c.Query("page"), 1)
 	limit := utils.ParseIntQuery(c, c.Query("limit"), 20)
@@ -108,19 +74,6 @@ func (h *AdminHandler) GetAllPurchases(c *gin.Context) {
 	})
 }
 
-// GetAllRedemptions godoc
-// @Summary Get all redemptions with filters
-// @Tags Admin
-// @Security BearerAuth
-// @Produce json
-// @Param page query int false "Page number"
-// @Param limit query int false "Items per page"
-// @Param status query string false "Redemption status"
-// @Param date_from query string false "Start date"
-// @Param date_to query string false "End date"
-// @Success 200 {object} map[string]interface{}
-// @Failure 500 {object} map[string]string
-// @Router /admin/redemptions [get]
 func (h *AdminHandler) GetAllRedemptions(c *gin.Context) {
 	page := utils.ParseIntQuery(c, c.Query("page"), 1)
 	limit := utils.ParseIntQuery(c, c.Query("limit"), 20)
@@ -145,17 +98,6 @@ func (h *AdminHandler) GetAllRedemptions(c *gin.Context) {
 	})
 }
 
-// UpdateRedemptionStatus godoc
-// @Summary Update status of a redemption
-// @Tags Admin
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param id path string true "Redemption ID"
-// @Param request body types.UpdateRedemptionStatusRequest true "Status update payload"
-// @Success 200 {object} map[string]string
-// @Failure 400,404,500 {object} map[string]string
-// @Router /admin/redemptions/{id}/status [put]
 func (h *AdminHandler) UpdateRedemptionStatus(c *gin.Context) {
 	var req types.UpdateRedemptionStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -179,17 +121,6 @@ func (h *AdminHandler) UpdateRedemptionStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Status updated successfully"})
 }
 
-// ManageUserCredits godoc
-// @Summary Add or subtract user credits
-// @Tags Admin
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Param request body types.ManageCreditsRequest true "Credits action payload"
-// @Success 200 {object} map[string]string
-// @Failure 400,404,500 {object} map[string]string
-// @Router /admin/users/{id}/credits [post]
 func (h *AdminHandler) ManageUserCredits(c *gin.Context) {
 	userID := c.Param("id")
 
@@ -215,17 +146,6 @@ func (h *AdminHandler) ManageUserCredits(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Credits updated successfully"})
 }
 
-// ManageUserPoints godoc
-// @Summary Add or subtract user points
-// @Tags Admin
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Param request body types.ManagePointsRequest true "Points action payload"
-// @Success 200 {object} map[string]string
-// @Failure 400,404,500 {object} map[string]string
-// @Router /admin/users/{id}/points [post]
 func (h *AdminHandler) ManageUserPoints(c *gin.Context) {
 	userID := c.Param("id")
 
@@ -251,17 +171,6 @@ func (h *AdminHandler) ManageUserPoints(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Points updated successfully"})
 }
 
-// ModerateUser godoc
-// @Summary Update user status (active, banned, suspended)
-// @Tags Admin
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param id path string true "User ID"
-// @Param request body types.ModerateUserRequest true "Moderate user request"
-// @Success 200 {object} map[string]string
-// @Failure 400,404,500 {object} map[string]string
-// @Router /admin/users/{id}/status [put]
 func (h *AdminHandler) ModerateUser(c *gin.Context) {
 	userID := c.Param("id")
 

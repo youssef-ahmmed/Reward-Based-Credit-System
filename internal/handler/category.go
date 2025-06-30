@@ -16,18 +16,6 @@ func NewCategoryHandler(service service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{service}
 }
 
-// CreateCategory godoc
-// @Summary Create new category
-// @Description Create a new category with optional parent
-// @Tags Categories
-// @Accept json
-// @Produce json
-// @Param request body types.CreateCategoryRequest true "Category data"
-// @Success 201 {object} map[string]interface{}
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Router /categories [post]
-// @Security BearerAuth
 func (h *CategoryHandler) CreateCategory(c *gin.Context) {
 	var req types.CreateCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -47,15 +35,6 @@ func (h *CategoryHandler) CreateCategory(c *gin.Context) {
 	})
 }
 
-// GetAllCategories godoc
-// @Summary List all categories
-// @Description Fetch list of categories, optionally filtered by parent ID
-// @Tags Categories
-// @Produce json
-// @Param parent_id query string false "Parent category ID"
-// @Success 200 {object} map[string]interface{}
-// @Failure 500 {object} map[string]string
-// @Router /categories [get]
 func (h *CategoryHandler) GetAllCategories(c *gin.Context) {
 	var parentID *string
 	if p := c.Query("parent_id"); p != "" {
@@ -69,17 +48,6 @@ func (h *CategoryHandler) GetAllCategories(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"categories": categories})
 }
 
-// GetCategoryDetails godoc
-// @Summary Get category details and its products
-// @Description Retrieve category details along with its paginated products
-// @Tags Categories
-// @Produce json
-// @Param id path string true "Category ID"
-// @Param page query int false "Page number"
-// @Param limit query int false "Items per page"
-// @Success 200 {object} interface{}
-// @Failure 404 {object} map[string]string
-// @Router /categories/{id} [get]
 func (h *CategoryHandler) GetCategoryDetails(c *gin.Context) {
 	id := c.Param("id")
 	page := utils.ParseIntQuery(c, "page", 1)
@@ -94,20 +62,6 @@ func (h *CategoryHandler) GetCategoryDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-// UpdateCategory godoc
-// @Summary Update category details
-// @Description Update name or description of a category
-// @Tags Categories
-// @Accept json
-// @Produce json
-// @Param id path string true "Category ID"
-// @Param request body types.UpdateCategoryRequest true "Update data"
-// @Success 200 {object} map[string]interface{}
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Router /categories/{id} [put]
-// @Security BearerAuth
 func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 	id := c.Param("id")
 	var req types.UpdateCategoryRequest
@@ -133,16 +87,6 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 	})
 }
 
-// DeleteCategory godoc
-// @Summary Delete a category
-// @Description Delete a category by ID
-// @Tags Categories
-// @Produce json
-// @Param id path string true "Category ID"
-// @Success 204 {string} string "No Content"
-// @Failure 404 {object} map[string]string
-// @Router /categories/{id} [delete]
-// @Security BearerAuth
 func (h *CategoryHandler) DeleteCategory(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.service.DeleteCategory(id); err != nil {
