@@ -16,6 +16,6 @@ func RegisterAdminRoutes(rg *gin.RouterGroup, handler *handler.AdminHandler) {
 
 	admin.PUT("/redemptions/:id/status", handler.UpdateRedemptionStatus)
 	admin.POST("/users/:id/credits", handler.ManageUserCredits)
-	admin.POST("/users/:id/points", handler.ManageUserPoints) // todo
+	admin.POST("/users/:id/points", handler.ManageUserPoints)
 	admin.PUT("/users/:id/status", handler.ModerateUser)
 }
