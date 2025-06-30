@@ -212,7 +212,7 @@ All APIs are documented using Swagger.
 You can load sample test data with:
 
 ```bash
-psql -U postgres -d rewards_db < seed/seed.sql
+psql -U postgres -d rewards_db < design/seed.sql
 ```
 
 ---
