@@ -21,98 +21,18 @@ search, Docker support, and AI recommendations.
 
 ### 📘 ERD Snapshot
 
-```text
-User ---1:1---> Wallet
-User ---1:N---> Purchase
-User ---1:N---> Redemption
-Product ---N:1---> Category
-Purchase ---N:1---> CreditPackage
-Redemption ---N:1---> Product
-```
-
-### ⚙️ Clean Architecture
-
-```text
-internal/
-│
-├── repository/ → GORM-based data access logic
-├── service/ → Core business logic and rule enforcement
-├── handler/ → HTTP layer (Gin)
-├── api/ → Route definitions
-├── migration/ → Auto schema migration on startup
-├── store/ → GORM models (User, Wallet, Product, etc.)
-├── types/ → DTOs, shared structs
-└── app/ → DI: modules wiring & bootstrapping
-```
-
-## 🧰 Tech Stack
-
-- Language: **Go**
-- HTTP Framework: **Gin**
-- ORM: **GORM**
-- Database: **PostgreSQL**
-- Auth: **JWT**
-- Docs: **Swagger (swaggo)**
-
----
-
-## ⚒️ Setup Instructions
-
-### 1. Clone the Repo
-
-```bash
-git clone https://github.com/youssef-ahmmed/Reward-Based-Credit-System.git
-cd Reward-Based-Credit-System
-```
-
-### 2. Run with Docker Compose
-
-```bash
-docker-compose up --build
-```
-
-This will start:
-
-- PostgreSQL (default port: `5432`)
-- Go API service (on [http://localhost:8080](http://localhost:8080/swagger/index.html))
-- Swagger docs (on [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html))
-
-### 3. Auto Migrations
-
-Tables are auto-created on boot using `gorm.AutoMigrate()` based on models in `internal/store`.
-
----
-
-## 📐 Design Phase & Documentation
-This project began with a carefully planned design phase to ensure consistency, maintainability, and scalability from the ground up. All design assets and documents are stored under the `/design` directory.
-
-### 📁 /design Directory Contents
-| File Name       | Description                                                                  |
-|-----------------|------------------------------------------------------------------------------|
-| `api-design.md` | Full documentation of the API endpoints, request/response formats, and rules |
-| `db-ddl.sql`    | Raw SQL schema used for initial database structure before GORM auto-migrate  |
-| `seed.sql`      | Sample data for categories, users, products, and credit packages             |
-
-These files provide a clear blueprint of the system’s behavior and database schema, which greatly helped in implementing the actual system with minimal changes and high clarity.
-
----
-
-### 🧱 ERD (Entity Relationship Diagram)
 Below is the ERD represented in Mermaid format:
+
 ```mermaid
 erDiagram
-    User ||--o{ Purchase : makes
-    User ||--o{ Wallet : owns
-    User ||--o{ Redemption : performs
-
-    Wallet ||--|| User : belongs_to
-
-    Purchase ||--|| CreditPackage : includes
-
-    Redemption ||--|| Product : redeems
-    Product ||--|| Category : belongs_to
-
-    CreditPackage ||--o{ Purchase : is_used_in
+    User ||--o{ Purchase: makes
+    User ||--o{ Wallet: owns
+    User ||--o{ Redemption: performs
+    Wallet ||--|| User: belongs_to
+    Purchase ||--|| CreditPackage: includes
+    Redemption ||--|| Product: redeems
+    Product ||--|| Category: belongs_to
+    CreditPackage ||--o{ Purchase: is_used_in
 
     User {
         int id PK
@@ -182,6 +102,73 @@ erDiagram
     }
 
 ```
+
+### 📐 Design Phase & Documentation
+
+This project began with a carefully planned design phase to ensure consistency, maintainability, and scalability from
+the ground up. All design assets and documents are stored under the `/design` directory.
+
+### 📁 /design Directory Contents
+
+| File Name       | Description                                                                  |
+|-----------------|------------------------------------------------------------------------------|
+| `api-design.md` | Full documentation of the API endpoints, request/response formats, and rules |
+| `db-ddl.sql`    | Raw SQL schema used for initial database structure before GORM auto-migrate  |
+| `seed.sql`      | Sample data for categories, users, products, and credit packages             |
+
+These files provide a clear blueprint of the system’s behavior and database schema, which greatly helped in implementing
+the actual system with minimal changes and high clarity.
+
+### ⚙️ Clean Architecture
+
+```text
+internal/
+│
+├── repository/ → GORM-based data access logic
+├── service/ → Core business logic and rule enforcement
+├── handler/ → HTTP layer (Gin)
+├── api/ → Route definitions
+├── migration/ → Auto schema migration on startup
+├── store/ → GORM models (User, Wallet, Product, etc.)
+├── types/ → DTOs, shared structs
+└── app/ → DI: modules wiring & bootstrapping
+```
+
+## 🧰 Tech Stack
+
+- Language: **Go**
+- HTTP Framework: **Gin**
+- ORM: **GORM**
+- Database: **PostgreSQL**
+- Auth: **JWT**
+- Docs: **Swagger (swaggo)**
+
+---
+
+## ⚒️ Setup Instructions
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/youssef-ahmmed/Reward-Based-Credit-System.git
+cd Reward-Based-Credit-System
+```
+
+### 2. Run with Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+This will start:
+
+- PostgreSQL (default port: `5432`)
+- Go API service (on [http://localhost:8080](http://localhost:8080/swagger/index.html))
+- Swagger docs (on [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html))
+
+### 3. Auto Migrations
+
+Tables are auto-created on boot using `gorm.AutoMigrate()` based on models in `internal/store`.
 
 ---
 
