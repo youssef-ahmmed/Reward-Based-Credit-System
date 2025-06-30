@@ -83,6 +83,108 @@ Tables are auto-created on boot using `gorm.AutoMigrate()` based on models in `i
 
 ---
 
+## 📐 Design Phase & Documentation
+This project began with a carefully planned design phase to ensure consistency, maintainability, and scalability from the ground up. All design assets and documents are stored under the `/design` directory.
+
+### 📁 /design Directory Contents
+| File Name       | Description                                                                  |
+|-----------------|------------------------------------------------------------------------------|
+| `api-design.md` | Full documentation of the API endpoints, request/response formats, and rules |
+| `db-ddl.sql`    | Raw SQL schema used for initial database structure before GORM auto-migrate  |
+| `seed.sql`      | Sample data for categories, users, products, and credit packages             |
+
+These files provide a clear blueprint of the system’s behavior and database schema, which greatly helped in implementing the actual system with minimal changes and high clarity.
+
+---
+
+### 🧱 ERD (Entity Relationship Diagram)
+Below is the ERD represented in Mermaid format:
+```mermaid
+erDiagram
+    User ||--o{ Purchase : makes
+    User ||--o{ Wallet : owns
+    User ||--o{ Redemption : performs
+
+    Wallet ||--|| User : belongs_to
+
+    Purchase ||--|| CreditPackage : includes
+
+    Redemption ||--|| Product : redeems
+    Product ||--|| Category : belongs_to
+
+    CreditPackage ||--o{ Purchase : is_used_in
+
+    User {
+        int id PK
+        string first_name
+        string last_name
+        string username
+        string email
+        string password_hash
+        string role
+        string status
+        datetime created_at
+    }
+
+    Wallet {
+        int id PK
+        int user_id FK
+        int points_balance
+        int credits_balance
+        datetime updated_at
+    }
+
+    Purchase {
+        int id PK
+        int user_id FK
+        int credit_package_id FK
+        string status
+        int credits
+        datetime created_at
+    }
+
+    CreditPackage {
+        int id PK
+        string name
+        float price
+        int reward_points
+        int credits
+        boolean is_active
+        datetime created_at
+    }
+
+    Redemption {
+        int id PK
+        int user_id FK
+        int product_id FK
+        int quantity
+        string status
+        datetime created_at
+    }
+
+    Product {
+        int id PK
+        int category_id FK
+        string name
+        string description
+        int redemption_points
+        int stock_quantity
+        boolean is_offer
+        string tags
+        datetime created_at
+    }
+
+    Category {
+        int id PK
+        int parent_category_id FK
+        string name
+        string description
+    }
+
+```
+
+---
+
 ## 📊 API Documentation
 
 All APIs are documented using Swagger.
