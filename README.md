@@ -108,7 +108,7 @@ erDiagram
 This project began with a carefully planned design phase to ensure consistency, maintainability, and scalability from
 the ground up. All design assets and documents are stored under the `/design` directory.
 
-### 📁 /design Directory Contents
+#### 📁 /design Directory Contents
 
 | File Name       | Description                                                                  |
 |-----------------|------------------------------------------------------------------------------|
