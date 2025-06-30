@@ -106,15 +106,15 @@ erDiagram
 ### 📐 Design Phase & Documentation
 
 This project began with a carefully planned design phase to ensure consistency, maintainability, and scalability from
-the ground up. All design assets and documents are stored under the `/design` directory.
+the ground up. All design assets and documents are stored under the [./design](./design) directory.
 
 #### 📁 /design Directory Contents
 
-| File Name       | Description                                                                  |
-|-----------------|------------------------------------------------------------------------------|
-| `api-design.md` | Full documentation of the API endpoints, request/response formats, and rules |
-| `db-ddl.sql`    | Raw SQL schema used for initial database structure before GORM auto-migrate  |
-| `seed.sql`      | Sample data for categories, users, products, and credit packages             |
+| File Name                               | Description                                                                  |
+|-----------------------------------------|------------------------------------------------------------------------------|
+| [api-design.md](./design/api-design.md) | Full documentation of the API endpoints, request/response formats, and rules |
+| [db-ddl.sql](./design/db-ddl.sql)       | Raw SQL schema used for initial database structure before GORM auto-migrate  |
+| [seed.sql](./design/seed.sql)           | Sample data for categories, users, products, and credit packages             |
 
 These files provide a clear blueprint of the system’s behavior and database schema, which greatly helped in implementing
 the actual system with minimal changes and high clarity.
