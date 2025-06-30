@@ -1,0 +1,1793 @@
+basePath: /api
+definitions:
+  store.Category:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/store.Category'
+        type: array
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      parent_category_id:
+        type: string
+    type: object
+  types.ChangePasswordRequest:
+    properties:
+      confirmPassword:
+        type: string
+      currentPassword:
+        type: string
+      newPassword:
+        minLength: 8
+        type: string
+    required:
+    - confirmPassword
+    - currentPassword
+    - newPassword
+    type: object
+  types.CreateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parentCategoryId:
+        type: string
+    type: object
+  types.CreateCreditPackageRequest:
+    properties:
+      credits:
+        type: integer
+      isActive:
+        type: boolean
+      name:
+        type: string
+      priceEgp:
+        type: number
+      rewardPoints:
+        type: integer
+    required:
+    - credits
+    - isActive
+    - name
+    - priceEgp
+    - rewardPoints
+    type: object
+  types.CreateProductRequest:
+    properties:
+      categoryId:
+        type: string
+      description:
+        type: string
+      imageUrl:
+        type: string
+      isOffer:
+        type: boolean
+      name:
+        type: string
+      redemptionPoints:
+        type: integer
+      stockQuantity:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  types.CreatePurchaseRequest:
+    properties:
+      creditPackageId:
+        type: string
+      paymentDetails:
+        additionalProperties: true
+        type: object
+      paymentMethod:
+        type: string
+    required:
+    - creditPackageId
+    - paymentMethod
+    type: object
+  types.CreateRedemptionRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  types.CreditCreditPackageResponse:
+    properties:
+      createdAt:
+        type: string
+      credits:
+        type: integer
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      priceEgp:
+        type: number
+      rewardPoints:
+        type: integer
+    type: object
+  types.DashboardStatsResponse:
+    properties:
+      creditsIssued:
+        type: string
+      pointsEarned:
+        type: string
+      totalOrders:
+        type: integer
+      totalUsers:
+        type: integer
+    type: object
+  types.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  types.ManageCreditsRequest:
+    properties:
+      action:
+        description: '"add" or "subtract"'
+        type: string
+      amount:
+        type: integer
+    required:
+    - action
+    - amount
+    type: object
+  types.ManagePointsRequest:
+    properties:
+      action:
+        description: '"add" or "subtract"'
+        type: string
+      amount:
+        minimum: 1
+        type: integer
+    required:
+    - action
+    - amount
+    type: object
+  types.ModerateUserRequest:
+    properties:
+      reason:
+        type: string
+      status:
+        description: active, suspended, banned
+        type: string
+    required:
+    - status
+    type: object
+  types.PaginatedResponse:
+    properties:
+      packages:
+        items:
+          $ref: '#/definitions/types.CreditCreditPackageResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/types.PaginationMeta'
+    type: object
+  types.PaginationMeta:
+    properties:
+      currentPage:
+        type: integer
+      itemsPerPage:
+        type: integer
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
+  types.RecommendationRequest:
+    properties:
+      context:
+        type: string
+      limit:
+        type: integer
+      user_preferences:
+        properties:
+          categories:
+            description: <== UUIDs as strings
+            items:
+              type: string
+            type: array
+          exclude_categories:
+            description: <== UUIDs as strings
+            items:
+              type: string
+            type: array
+          price_range:
+            properties:
+              max_points:
+                type: integer
+              min_points:
+                type: integer
+            type: object
+        type: object
+    type: object
+  types.RecommendationResponse:
+    properties:
+      recommendation_meta:
+        properties:
+          algorithm_version:
+            type: string
+          generated_at:
+            type: string
+          user_segment:
+            type: string
+        type: object
+      recommendations:
+        items:
+          $ref: '#/definitions/types.RecommendedProduct'
+        type: array
+    type: object
+  types.RecommendedProduct:
+    properties:
+      confidence_score:
+        type: number
+      product:
+        properties:
+          category:
+            $ref: '#/definitions/store.Category'
+          description:
+            type: string
+          id:
+            type: string
+          is_offer:
+            type: boolean
+          name:
+            type: string
+          redemption_points:
+            type: integer
+          stock_quantity:
+            type: integer
+        type: object
+      reason:
+        type: string
+    type: object
+  types.RefreshRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  types.SignUpInput:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    - password
+    - username
+    type: object
+  types.TokenPair:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  types.UpdateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parentCategoryId:
+        type: string
+    type: object
+  types.UpdateCreditPackageRequest:
+    properties:
+      credits:
+        type: integer
+      isActive:
+        type: boolean
+      name:
+        type: string
+      priceEgp:
+        type: number
+      rewardPoints:
+        type: integer
+    required:
+    - credits
+    - isActive
+    - name
+    - priceEgp
+    - rewardPoints
+    type: object
+  types.UpdateProductRequest:
+    properties:
+      categoryId:
+        type: string
+      description:
+        type: string
+      imageUrl:
+        type: string
+      isOffer:
+        type: boolean
+      name:
+        type: string
+      redemptionPoints:
+        type: integer
+      stockQuantity:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  types.UpdateProfileRequest:
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
+    type: object
+  types.UpdateRedemptionStatusRequest:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API documentation for Reward-Based Credit System
+  title: Reward System API
+  version: "1.0"
+paths:
+  /admin/dashboard:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DashboardStatsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get admin dashboard stats
+      tags:
+      - Admin
+  /admin/purchases:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Purchase status
+        in: query
+        name: status
+        type: string
+      - description: Start date
+        in: query
+        name: date_from
+        type: string
+      - description: End date
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all purchases with filters
+      tags:
+      - Admin
+  /admin/redemptions:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Redemption status
+        in: query
+        name: status
+        type: string
+      - description: Start date
+        in: query
+        name: date_from
+        type: string
+      - description: End date
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all redemptions with filters
+      tags:
+      - Admin
+  /admin/redemptions/{id}/status:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Redemption ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status update payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateRedemptionStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update status of a redemption
+      tags:
+      - Admin
+  /admin/users:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
+      - description: Sort by field
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order (asc/desc)
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all users with pagination, filtering and sorting
+      tags:
+      - Admin
+  /admin/users/{id}/credits:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Credits action payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ManageCreditsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add or subtract user credits
+      tags:
+      - Admin
+  /admin/users/{id}/points:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Points action payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ManagePointsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add or subtract user points
+      tags:
+      - Admin
+  /admin/users/{id}/status:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Moderate user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ModerateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user status (active, banned, suspended)
+      tags:
+      - Admin
+  /ai/recommendations:
+    post:
+      consumes:
+      - application/json
+      description: Returns product recommendations based on user preferences, point
+        balance, and context
+      parameters:
+      - description: Recommendation Input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RecommendationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RecommendationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get AI-based product recommendations
+      tags:
+      - AI
+  /auth/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Changes the current user's password
+      parameters:
+      - description: Password change data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change user password
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns access and refresh tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Returns a new access and refresh token pair
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.TokenPair'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Refresh JWT tokens
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account with the given credentials
+      parameters:
+      - description: Signup data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.SignUpInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - Auth
+  /categories:
+    get:
+      description: Fetch list of categories, optionally filtered by parent ID
+      parameters:
+      - description: Parent category ID
+        in: query
+        name: parent_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category with optional parent
+      parameters:
+      - description: Category data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create new category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      description: Delete a category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a category
+      tags:
+      - Categories
+    get:
+      description: Retrieve category details along with its paginated products
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get category details and its products
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Update name or description of a category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update category details
+      tags:
+      - Categories
+  /credit-packages:
+    get:
+      description: Fetch all available credit packages with pagination and optional
+        active filter
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by active status
+        in: query
+        name: active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.PaginatedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all credit packages
+      tags:
+      - Credit Packages
+    post:
+      consumes:
+      - application/json
+      description: Admin can create a new credit package with points and credits
+      parameters:
+      - description: Credit Package creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateCreditPackageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new credit package
+      tags:
+      - Credit Packages
+  /credit-packages/{id}:
+    delete:
+      description: Admin can delete a credit package by ID
+      parameters:
+      - description: CreditPackage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a credit package
+      tags:
+      - Credit Packages
+    get:
+      description: Retrieve a single credit package by its ID
+      parameters:
+      - description: CreditPackage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get credit package by ID
+      tags:
+      - Credit Packages
+    put:
+      consumes:
+      - application/json
+      description: Admin can update a credit package by ID
+      parameters:
+      - description: CreditPackage ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Credit Package update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateCreditPackageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update an existing credit package
+      tags:
+      - Credit Packages
+  /products:
+    get:
+      description: Retrieve all products with optional filters and pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by field (e.g., created_at, reward_points)
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order (asc or desc)
+        in: query
+        name: sort_order
+        type: string
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: string
+      - description: Filter by offer status
+        in: query
+        name: is_offer
+        type: boolean
+      - description: Minimum reward points
+        in: query
+        name: min_points
+        type: integer
+      - description: Maximum reward points
+        in: query
+        name: max_points
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Admin can create a new redeemable product
+      parameters:
+      - description: Product data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      description: Admin can delete a product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Admin can update a product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated product data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - Products
+  /products/search:
+    get:
+      description: Search products by query and optional filters
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by category ID
+        in: query
+        name: category_id
+        type: string
+      - description: Filter by offer status
+        in: query
+        name: is_offer
+        type: boolean
+      - description: Minimum reward points
+        in: query
+        name: min_points
+        type: integer
+      - description: Maximum reward points
+        in: query
+        name: max_points
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search products
+      tags:
+      - Products
+  /purchases:
+    get:
+      description: Returns paginated purchases for a user with optional status filter
+      parameters:
+      - description: Filter by status (e.g. completed, pending)
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all purchases by the authenticated user
+      tags:
+      - Purchases
+    post:
+      consumes:
+      - application/json
+      description: User purchases a credit package. Requires authentication.
+      parameters:
+      - description: Purchase input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreatePurchaseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "402":
+          description: Payment failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Package not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new purchase
+      tags:
+      - Purchases
+  /purchases/{id}:
+    get:
+      description: Returns a purchase if it belongs to the authenticated user
+      parameters:
+      - description: Purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Access denied
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get details of a specific purchase
+      tags:
+      - Purchases
+  /redemptions:
+    get:
+      description: Returns paginated list of redemptions made by the user
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated redemptions
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all redemptions of the authenticated user
+      tags:
+      - Redemptions
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to redeem a product if they have enough points and
+        stock is available
+      parameters:
+      - description: Redemption input
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateRedemptionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Redemption successful
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request or insufficient points
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Product or wallet not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Insufficient stock
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Redemption failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Redeem a product using points
+      tags:
+      - Redemptions
+  /redemptions/{id}:
+    get:
+      description: Returns redemption details if it belongs to the authenticated user
+      parameters:
+      - description: Redemption ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Redemption data
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Not allowed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Redemption not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get details of a specific redemption
+      tags:
+      - Redemptions
+  /user/profile:
+    get:
+      description: Retrieves the authenticated user's profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile retrieved
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Allows authenticated users to update their profile details
+      parameters:
+      - description: Updated profile data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Username already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update user profile
+      tags:
+      - User
+  /user/wallets:
+    get:
+      description: Retrieves the authenticated user's wallet with points and credit
+        balances
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User wallet retrieved
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Failed to fetch wallet
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user wallet
+      tags:
+      - Wallet
+swagger: "2.0"
