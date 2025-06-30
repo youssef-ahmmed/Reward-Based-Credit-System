@@ -172,6 +172,28 @@ Tables are auto-created on boot using `gorm.AutoMigrate()` based on models in `i
 
 ---
 
+## 🔐 Environment Configuration (.env File)
+
+To run the project successfully, you need to create a `.env` file in the root directory of the project.
+
+### 📄 Required `.env` Variables
+
+```dotenv
+# Database configuration
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASSWORD=supersecurepassword
+DB_NAME=reward_system
+DB_SCHEMA=core
+DB_PORT=5432
+
+# JWT Secrets
+ACCESS_SECRET=youraccesssecretkey
+REFRESH_SECRET=yourrefreshsecretkey
+```
+
+---
+
 ## 📊 API Documentation
 
 All APIs are documented using Swagger.
