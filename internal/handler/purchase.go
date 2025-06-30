@@ -16,6 +16,20 @@ func NewPurchaseHandler(service service.PurchaseService) *PurchaseHandler {
 	return &PurchaseHandler{service}
 }
 
+// CreatePurchase godoc
+// @Summary Create a new purchase
+// @Description User purchases a credit package. Requires authentication.
+// @Tags Purchases
+// @Accept json
+// @Produce json
+// @Param request body types.CreatePurchaseRequest true "Purchase input"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string "Invalid data"
+// @Failure 402 {object} map[string]string "Payment failed"
+// @Failure 404 {object} map[string]string "Package not found"
+// @Failure 500 {object} map[string]string "Internal error"
+// @Router /purchases [post]
+// @Security BearerAuth
 func (h *PurchaseHandler) CreatePurchase(c *gin.Context) {
 	var req types.CreatePurchaseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,6 +53,18 @@ func (h *PurchaseHandler) CreatePurchase(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"purchase": resp})
 }
 
+// GetUserPurchases godoc
+// @Summary Get all purchases by the authenticated user
+// @Description Returns paginated purchases for a user with optional status filter
+// @Tags Purchases
+// @Produce json
+// @Param status query string false "Filter by status (e.g. completed, pending)"
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(20)
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]string
+// @Router /purchases [get]
+// @Security BearerAuth
 func (h *PurchaseHandler) GetUserPurchases(c *gin.Context) {
 	userID := c.GetString("userId")
 	status := c.Query("status")
@@ -54,6 +80,18 @@ func (h *PurchaseHandler) GetUserPurchases(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"purchases": purchases, "pagination": meta})
 }
 
+// GetPurchaseByID godoc
+// @Summary Get details of a specific purchase
+// @Description Returns a purchase if it belongs to the authenticated user
+// @Tags Purchases
+// @Produce json
+// @Param id path string true "Purchase ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 403 {object} map[string]string "Access denied"
+// @Failure 404 {object} map[string]string "Not found"
+// @Failure 500 {object} map[string]string "Internal error"
+// @Router /purchases/{id} [get]
+// @Security BearerAuth
 func (h *PurchaseHandler) GetPurchaseByID(c *gin.Context) {
 	id := c.Param("id")
 	userID := c.GetString("userId")

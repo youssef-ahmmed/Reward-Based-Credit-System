@@ -15,6 +15,15 @@ func NewWalletHandler(service service.WalletService) *WalletHandler {
 	return &WalletHandler{service}
 }
 
+// GetWallet godoc
+// @Summary Get user wallet
+// @Description Retrieves the authenticated user's wallet with points and credit balances
+// @Tags Wallet
+// @Produce json
+// @Success 200 {object} map[string]interface{} "User wallet retrieved"
+// @Failure 500 {object} map[string]string "Failed to fetch wallet"
+// @Router /user/wallets [get]
+// @Security BearerAuth
 func (h *WalletHandler) GetWallet(c *gin.Context) {
 	userID := c.GetString("userId")
 

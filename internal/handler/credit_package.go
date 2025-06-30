@@ -16,6 +16,17 @@ func NewCreditPackageHandler(service service.CreditPackageService) *CreditPackag
 	return &CreditPackageHandler{service}
 }
 
+// GetAllCreditPackages godoc
+// @Summary Get all credit packages
+// @Description Fetch all available credit packages with pagination and optional active filter
+// @Tags Credit Packages
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(20)
+// @Param active query bool false "Filter by active status"
+// @Success 200 {object} types.PaginatedResponse
+// @Failure 500 {object} map[string]string
+// @Router /credit-packages [get]
 func (h *CreditPackageHandler) GetAllCreditPackages(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
@@ -38,6 +49,15 @@ func (h *CreditPackageHandler) GetAllCreditPackages(c *gin.Context) {
 	})
 }
 
+// GetCreditPackageByID godoc
+// @Summary Get credit package by ID
+// @Description Retrieve a single credit package by its ID
+// @Tags Credit Packages
+// @Produce json
+// @Param id path string true "CreditPackage ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 404 {object} map[string]string
+// @Router /credit-packages/{id} [get]
 func (h *CreditPackageHandler) GetCreditPackageByID(c *gin.Context) {
 	id := c.Param("id")
 	pkg, err := h.service.GetCreditPackageByID(id)
@@ -48,6 +68,18 @@ func (h *CreditPackageHandler) GetCreditPackageByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"package": pkg})
 }
 
+// CreateCreditPackage godoc
+// @Summary Create a new credit package
+// @Description Admin can create a new credit package with points and credits
+// @Tags Credit Packages
+// @Accept json
+// @Produce json
+// @Param request body types.CreateCreditPackageRequest true "Credit Package creation data"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /credit-packages [post]
+// @Security BearerAuth
 func (h *CreditPackageHandler) CreateCreditPackage(c *gin.Context) {
 	var req types.CreateCreditPackageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -67,6 +99,19 @@ func (h *CreditPackageHandler) CreateCreditPackage(c *gin.Context) {
 	})
 }
 
+// UpdateCreditPackages godoc
+// @Summary Update an existing credit package
+// @Description Admin can update a credit package by ID
+// @Tags Credit Packages
+// @Accept json
+// @Produce json
+// @Param id path string true "CreditPackage ID"
+// @Param request body types.UpdateCreditPackageRequest true "Credit Package update data"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /credit-packages/{id} [put]
+// @Security BearerAuth
 func (h *CreditPackageHandler) UpdateCreditPackages(c *gin.Context) {
 	id := c.Param("id")
 	var req types.UpdateCreditPackageRequest
@@ -87,6 +132,16 @@ func (h *CreditPackageHandler) UpdateCreditPackages(c *gin.Context) {
 	})
 }
 
+// DeleteCreditPackage godoc
+// @Summary Delete a credit package
+// @Description Admin can delete a credit package by ID
+// @Tags Credit Packages
+// @Produce json
+// @Param id path string true "CreditPackage ID"
+// @Success 204 {string} string "No Content"
+// @Failure 404 {object} map[string]string
+// @Router /credit-packages/{id} [delete]
+// @Security BearerAuth
 func (h *CreditPackageHandler) DeleteCreditPackage(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.service.DeleteCreditPackage(id); err != nil {
