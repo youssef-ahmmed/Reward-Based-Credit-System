@@ -157,7 +157,7 @@ cd Reward-Based-Credit-System
 ### 2. Run with Docker Compose
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This will start:
