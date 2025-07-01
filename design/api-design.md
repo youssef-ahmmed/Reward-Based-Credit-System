@@ -3,7 +3,7 @@
 ## Base URL
 
 ```
-https://api.4sale-rewards.com/api/v1
+https://api.reward-credit.com/api/v1
 ```
 
 ## Authentication
